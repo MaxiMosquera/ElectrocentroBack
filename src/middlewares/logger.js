@@ -19,7 +19,7 @@ export const validateToken = (req, res, next) => {
     console.log("→ [MIDDLEWARE] Usuario autenticado:", req.user);
     
     console.log("→ [MIDDLEWARE] Pasando a next()");
-    next(); // 🔥 Aquí verificamos que el flujo siga correctamente 🔥
+    next(); // 
   } catch (error) {
     console.error('→ [MIDDLEWARE] Error al verificar el JWT:', error.message);
     return res.status(401).json({ error: 'Token inválido o expirado.' });
