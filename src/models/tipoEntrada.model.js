@@ -8,26 +8,10 @@ const Tipo_entrada = sequelize.define('tipo_entrada', {
       primaryKey: true,
       autoIncrement: true
     },
-    codigo: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
     tipo: {
       type: DataTypes.STRING,
       allowNull: true
-    },
-    tamanio: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      default: 0
-    },
-      
-    precio: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      default: 0
-    },
-    
+    }
 
 
   }, {

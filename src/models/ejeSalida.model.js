@@ -22,11 +22,11 @@ const Eje_salida = sequelize.define('eje_salida', {
       default: 0
     },
       
-    precio: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      default: 0
-    },
+precio: {
+  type: DataTypes.DECIMAL(5,1), // o el rango/escala que prefieras
+  allowNull: false,
+  defaultValue: 0
+},
     
 
 
