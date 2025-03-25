@@ -80,21 +80,24 @@ export const loginUser = async (req, res) => {
         return res.status(401).json({ error: 'Contraseña incorrecta' });
       }
   
-      // Generar token JWT
       const token = jwt.sign(
-        { id: user.id, email: user.email },
-        SECRET_KEY
+        { id: user.id, email: user.email, rol: user.rol }, 
+        process.env.SECRET_KEY, 
+        { expiresIn: '1h' }
       );
   
-      // Enviar respuesta con usuario y token
+      // Enviar respuesta con usuario, token y descuento si aplica
       res.json({
         message: 'Inicio de sesión exitoso',
         user: {
           id: user.id,
-          name: user.name,
+          nombre: user.nombre,
           email: user.email,
+          rol: user.rol
         },
         token,
+        descuento: user.rol === 3 ? "Aplica descuento especial" : "Sin descuento", // Agregamos el descuento solo si el rol es 3
+        accesoAdmin: user.rol === 2 // Booleano para permitir acceso a admin en el frontend
       });
     } catch (error) {
       console.error(error);

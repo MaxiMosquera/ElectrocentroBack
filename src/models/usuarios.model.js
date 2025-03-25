@@ -28,7 +28,7 @@ const Usuario = sequelize.define('usuario', {
     rol: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 1
+      defaultValue: 1  // 1 para usuario, 2 para administrador,3 para especial
     },    
     direccion: {
       type: DataTypes.STRING,
