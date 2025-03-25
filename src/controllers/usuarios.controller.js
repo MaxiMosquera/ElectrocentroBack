@@ -207,3 +207,27 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ message: 'Error en el servidor' });
     }
   };
+
+  export const actualizarRolUsuario = async (req, res) => {
+    const { id, nuevoRol } = req.body;
+
+    try {
+        // Verificar si el usuario autenticado es administrador
+        const admin = await Usuario.findByPk(req.user.id);
+        if (!admin || admin.rol !== 2) {
+            return res.status(403).json({ error: "Acceso denegado." });
+        }
+
+        // Buscar usuario a modificar
+        const usuario = await Usuario.findByPk(id);
+        if (!usuario) return res.status(404).json({ error: "Usuario no encontrado" });
+
+        usuario.rol = nuevoRol;
+        await usuario.save();
+
+        res.json({ message: "✅ Rol actualizado correctamente." });
+
+    } catch (error) {
+        res.status(500).json({ error: "❌ Error al actualizar el rol del usuario." });
+    }
+};

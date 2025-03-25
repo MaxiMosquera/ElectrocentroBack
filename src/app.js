@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import motorRouter from "../src/routes/motores.routes.js"
 import reductorRouter from  "../src/routes/reductores.routes.js"
 import usuarioRouter from "../src/routes/usuarios.routes.js"
+import bcrypt from "bcrypt";
 // Carga las variables de entorno desde el archivo .env
 dotenv.config();
 
@@ -29,13 +30,37 @@ app.use((err, req, res, next) => {
   app.use("/api/reductores",reductorRouter)
   app.use("/api/usuarios",usuarioRouter)
 
+// 🔹 Función para precargar un administrador
+const precargarAdmin = async () => {
+  try {
+      const adminExistente = await Usuario.findOne({ where: { rol: 2 } });
 
+      if (!adminExistente) {
+          const hashedPassword = await bcrypt.hash("admin123", 10);
+          await Usuario.create({
+              nombre: "Admin",
+              email: "admin@example.com",
+              contrasenia: hashedPassword,
+              telefono: "123456789",
+              rol: 2, // Rol de administrador
+              direccion: "Oficina Central"
+          });
+
+          console.log("✅ Administrador precargado con éxito.");
+      } else {
+          console.log("⚠️ Ya existe un administrador, no es necesario precargar.");
+      }
+  } catch (error) {
+      console.error("❌ Error al precargar el administrador:", error);
+  }
+};
 
   // Iniciar el servidor
 
-sequelize.sync({ alter: true }).then(() => {
-  const PORT = process.env.PORT || 3000;
-    const httpsServer = http.createServer( app);
+sequelize.sync({ alter: true }).then(async() => {
+    await precargarAdmin(); // 🟢 Precargar admin antes de iniciar el servidor
+    const PORT = process.env.PORT || 3000;
+    const httpsServer = http.createServer(app);
     httpsServer.listen(PORT , () => {
       
       console.log(`Servidor HTTPS está escuchando en el puerto ${PORT} http://localhost:3000`);
