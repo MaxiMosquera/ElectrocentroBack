@@ -9,13 +9,16 @@ import motorRouter from "../src/routes/motores.routes.js"
 import reductorRouter from  "../src/routes/reductores.routes.js"
 import usuarioRouter from "../src/routes/usuarios.routes.js"
 import bcrypt from "bcrypt";
-// Carga las variables de entorno desde el archivo .env
+import Usuario from "./models/usuarios.model.js";
+
 dotenv.config();
 
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 app.use(express.json());
 app.use(morgan("dev"));  
 
@@ -38,12 +41,12 @@ const precargarAdmin = async () => {
       if (!adminExistente) {
           const hashedPassword = await bcrypt.hash("admin123", 10);
           await Usuario.create({
-              nombre: "Admin",
+              name: "Admin",
               email: "admin@example.com",
-              contrasenia: hashedPassword,
+              password: hashedPassword,
               telefono: "123456789",
               rol: 2, // Rol de administrador
-              direccion: "Oficina Central"
+              address: "Oficina Central"
           });
 
           console.log("✅ Administrador precargado con éxito.");

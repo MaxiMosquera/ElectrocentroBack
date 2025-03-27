@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import nodemailer from "nodemailer";
 
+const  SECRET_KEY = process.env.JWT_SECRET
 
 export const getAllUsers = async (res) => {
     try {
@@ -69,7 +70,7 @@ export const loginUser = async (req, res) => {
   
     try {
       // Buscar usuario por email
-      const user = await User.findOne({ where: { email } });
+      const user = await Usuario.findOne({ where: { email } });
       if (!user) {
         return res.status(404).json({ error: 'Usuario no encontrado' });
       }
@@ -82,7 +83,7 @@ export const loginUser = async (req, res) => {
   
       const token = jwt.sign(
         { id: user.id, email: user.email, rol: user.rol }, 
-        process.env.SECRET_KEY, 
+        SECRET_KEY, 
         { expiresIn: '1h' }
       );
   
@@ -106,11 +107,12 @@ export const loginUser = async (req, res) => {
   };
 
   export const registerUser = async (req, res) => {
-    const { name, lastName, email, password, birthdate } = req.body;
+    const { name, email, password } = req.body;
+    console.log(req.body)
   
     try {
       // Verificar si el email ya está registrado
-      const existingUser = await User.findOne({ where: { email } });
+      const existingUser = await Usuario.findOne({ where: { email } });
       if (existingUser) {
         return res.status(400).json({ error: 'El correo ya está registrado' });
       }
@@ -119,12 +121,10 @@ export const loginUser = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
   
       // Crear el nuevo usuario
-      const newUser = await User.create({
+      const newUser = await Usuario.create({
         name,
-        lastName,
         email,
         password: hashedPassword,
-        birthdate,
       });
   
       // Generar un token JWT
@@ -137,10 +137,10 @@ export const loginUser = async (req, res) => {
         message: 'Usuario registrado exitosamente',
         user: {
           id: newUser.id,
-          nombre: newUser.nombre,
+          name: newUser.name,
           email: newUser.email,
           rol: newUser.rol,
-          direccion: newUser.direccion,
+          
         },
         token,
       });

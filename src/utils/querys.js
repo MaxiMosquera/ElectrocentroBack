@@ -1,6 +1,6 @@
 // --------------------------------------------motores--------------------------------------------------------------
 
-IINSERT INTO "fijacion_salida" ("codigo", "tamanio", "precio", "tipo", "createdAt", "updatedAt")
+INSERT INTO "fijacion_salida" ("codigo", "tamanio", "precio", "tipo", "createdAt", "updatedAt")
 VALUES
 
   (17675993, 30, 11.0, 'brazo', NOW(), NOW()),
@@ -26,25 +26,25 @@ INSERT INTO public.eje_salida
 (codigo, tipo, tamanio, precio, "createdAt", "updatedAt")
 VALUES
 
-  (0, 'macizo', 0, 0, NOW(), NOW()),
+  (0, 'hueco', 0, 0, NOW(), NOW()),
 
 
-  (17676052, 'hueco simple', 30, 14.1, NOW(), NOW()),
-  (17676053, 'hueco simple', 40, 17.4, NOW(), NOW()),
-  (17676054, 'hueco simple', 50, 19.7, NOW(), NOW()),
-  (17676056, 'hueco simple', 63, 21.3, NOW(), NOW()),
-  (17676057, 'hueco simple', 75, 23.7, NOW(), NOW()),
-  (17676090, 'hueco simple', 90, 27.3, NOW(), NOW()),
-  (17676049, 'hueco simple', 110, 43.3, NOW(), NOW()),
+  (17676052, 'macizo simple', 30, 14.1, NOW(), NOW()),
+  (17676053, 'macizo simple', 40, 17.4, NOW(), NOW()),
+  (17676054, 'macizo simple', 50, 19.7, NOW(), NOW()),
+  (17676056, 'macizo simple', 63, 21.3, NOW(), NOW()),
+  (17676057, 'macizo simple', 75, 23.7, NOW(), NOW()),
+  (17676090, 'macizo simple', 90, 27.3, NOW(), NOW()),
+  (17676049, 'macizo simple', 110, 43.3, NOW(), NOW()),
 
 
-  (17676033, 'hueco doble', 30, 17.0, NOW(), NOW()),
-  (17676034, 'hueco doble', 40, 20.0, NOW(), NOW()),
-  (17676035, 'hueco doble', 50, 22.0, NOW(), NOW()),
-  (17676036, 'hueco doble', 63, 23.3, NOW(), NOW()),
-  (17676037, 'hueco doble', 75, 28.7, NOW(), NOW()),
-  (17676048, 'hueco doble', 90, 33.3, NOW(), NOW()),
-  (17676039, 'hueco doble', 110, 51.6, NOW(), NOW());
+  (17676033, 'macizo doble', 30, 17.0, NOW(), NOW()),
+  (17676034, 'macizo doble', 40, 20.0, NOW(), NOW()),
+  (17676035, 'macizo doble', 50, 22.0, NOW(), NOW()),
+  (17676036, 'macizo doble', 63, 23.3, NOW(), NOW()),
+  (17676037, 'macizo doble', 75, 28.7, NOW(), NOW()),
+  (17676048, 'macizo doble', 90, 33.3, NOW(), NOW()),
+  (17676039, 'macizo doble', 110, 51.6, NOW(), NOW());
 
 //---------- eje de salida ---------------------
 
