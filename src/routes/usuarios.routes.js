@@ -1,12 +1,9 @@
 import express from "express";
-
-const router = express.Router();
-
 import {createUser,getAllUsers,getUserById,updateUser,deleteUser,registerUser,loginUser,requestPasswordReset,resetPassword,actualizarRolUsuario} from "../controllers/usuarios.controller.js";
 import { validateToken } from '../middlewares/logger.js';
 
 
-
+const router = express.Router();
 
 //rutas publicas
 

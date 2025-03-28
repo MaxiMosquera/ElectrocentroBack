@@ -10,6 +10,10 @@ import reductorRouter from  "../src/routes/reductores.routes.js"
 import usuarioRouter from "../src/routes/usuarios.routes.js"
 import bcrypt from "bcrypt";
 import Usuario from "./models/usuarios.model.js";
+import fijacion_salidaRouter from "../src/routes/fijacionSalida.routes.js"
+import eje_salidaRouter from "../src/routes/ejeSalida.routes.js"
+import tipo_entradaRouter from "../src/routes/tipoEntrada.routes.js"
+import pagosRouter from "../src/routes/pagos.routes.js"
 
 dotenv.config();
 
@@ -32,7 +36,10 @@ app.use((err, req, res, next) => {
   app.use("/api/motores",motorRouter)
   app.use("/api/reductores",reductorRouter)
   app.use("/api/usuarios",usuarioRouter)
-
+  app.use("/api/fijaciones-salida",fijacion_salidaRouter)
+  app.use("/api/ejes-salida",eje_salidaRouter)
+  app.use("/api/tipos-entrada",tipo_entradaRouter)
+  app.use("/api/pagos",pagosRouter)
 // 🔹 Función para precargar un administrador
 const precargarAdmin = async () => {
   try {

@@ -1,8 +1,8 @@
 import express from "express";
-
-const router = express.Router();
 import { createMotor, getAllMotores, getMotorById,updateMotor,deleteMotor} from "../controllers/motores.controller.js";
 
+
+const router = express.Router();
 // Obtener todos los motores
 router.get('/', getAllMotores);
 
