@@ -5,6 +5,8 @@ import Reductor from './reductores.model.js';
 import Tipo_entrada from './tipoEntrada.model.js';
 import Usuario from './usuarios.model.js';
 import Orden from './orden.model.js';
+import Convertidor from './convertidores.models.js';
+import ArranqueSuave from './arranquesuave.model.js';
 
 // ======================
 //   Relaciones
@@ -85,5 +87,7 @@ export {
   Reductor,
   Tipo_entrada,
   Usuario,
-  Orden
+  Orden,
+  Convertidor,
+  ArranqueSuave
 };
