@@ -1,4 +1,4 @@
-import Convertidor from "../models/index.model.js";
+import Convertidor from "../models/convertidores.models.js";
 
 export const getAllConvertidores = async (req, res) => {
     try {

@@ -5,11 +5,12 @@ import Reductor from './reductores.model.js';
 import Tipo_entrada from './tipoEntrada.model.js';
 import Usuario from './usuarios.model.js';
 import Orden from './orden.model.js';
+import OrderProduct from './orderProducts.model.js'; // Modelo para la relación de orden con productos
 import Convertidor from './convertidores.models.js';
 import ArranqueSuave from './arranquesuave.model.js';
 
 // ======================
-//   Relaciones
+//      Relaciones
 // ======================
 
 // -- Reductor <-> Eje_salida (N:1)
@@ -42,14 +43,15 @@ Tipo_entrada.hasMany(Reductor, {
   as: 'reductores_entrada'
 });
 
+// -- Usuario <-> Orden (1:N)
 Usuario.hasMany(Orden, {
   foreignKey: "user_id",
   as: "ordenes"
 });
-
-// ======================
-//   Relaciones con Users
-// ======================
+Orden.belongsTo(Usuario, {
+  foreignKey: "user_id",
+  as: "usuario"
+});
 
 // -- Usuario <-> Motor (1:N)
 Usuario.hasMany(Motor, {
@@ -70,24 +72,35 @@ Reductor.belongsTo(Usuario, {
   foreignKey: 'user_id',
   as: 'usuario'
 });
-Orden.belongsTo(Usuario, {
-  foreignKey: "user_id",
-  as: "usuario"  
-});
-
-// Nota: según lo indicado, Motor no se relaciona con estos modelos
 
 // ======================
-//   Exportar modelos
+// Relaciones de Orden con OrderProducts
+// ======================
+
+// Una orden puede tener muchos items asociados en order_products
+Orden.hasMany(OrderProduct, {
+  foreignKey: 'order_id',
+  as: 'order_products'
+});
+
+// Cada registro en order_products pertenece a una orden
+OrderProduct.belongsTo(Orden, {
+  foreignKey: 'order_id',
+  as: 'orden'
+});
+
+// ======================
+//      Exportar modelos
 // ======================
 export {
   Eje_salida,
   Fijacion_salida,
   Motor,
   Reductor,
-  Tipo_entrada,
+  Tipo_entrada,
   Usuario,
   Orden,
+  OrderProduct,
   Convertidor,
   ArranqueSuave
 };

@@ -10,6 +10,7 @@ export const createPreference = async (req, res) => {
 
     // Extraemos la metadata con los datos de la orden (si se envió)
     const metadata = req.body.metadata;
+    console.log(metadata,"METADATA")
 
     const body = {
       items: itemsArray.map((item) => ({
@@ -19,8 +20,8 @@ export const createPreference = async (req, res) => {
         currency_id: "ARS",
       })),
       back_urls: {
-        success: "http://localhost:5173/success",
-        failure: "http://localhost:5173/failure",
+        success: "http://localhost:5173/compra-exitosa",
+        failure: "http://localhost:5173/compra-fallida",
         pending: "http://localhost:5173/pending",
       },
       auto_return: "approved",

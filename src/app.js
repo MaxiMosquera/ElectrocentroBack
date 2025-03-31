@@ -15,10 +15,13 @@ import tipo_entradaRouter from "../src/routes/tipoEntrada.routes.js"
 import pagosRouter from "../src/routes/pagos.routes.js"
 import arranqueSuaveRouter from "../src/routes/arranquesuave.routes.js"
 import convertidorRouter from "../src/routes/convertidor.routes.js"
+import OrdenesRouter from './routes/Ordenes.routes.js'
 
 import crypto from "crypto";
 import axios from "axios";
 import { read } from "fs";
+import Orden from "./models/orden.model.js";
+import OrderProduct from "./models/orderProducts.model.js";
 dotenv.config();
 
 const app = express();
@@ -39,120 +42,152 @@ app.use((err, req, res, next) => {
 
   //rutas
 
-  app.post("/webhook", async (req, res) => {
-    try {
-      // 1. Lee la firma enviada en el header
-      const signature = req.headers["x-mercadopago-signature"];
-      // Utiliza req.rawBody para calcular la firma (si no está, se serializa req.body)
-      const rawBody = req.rawBody || JSON.stringify(req.body);
-  
-      // 2. Calcula la firma esperada utilizando HMAC-SHA256 y la clave secreta
-      const expectedSignature = crypto
-        .createHmac("sha256", process.env.MP_WEBHOOK_SECRET)
-        .update(rawBody)
-        .digest("hex");
-  
-      // 3. (Opcional) Compara ambas firmas para validar la notificación
-      /* if (signature !== expectedSignature) {
-        console.error("Firma inválida:", { signature, expectedSignature });
-        return res.status(401).send("Firma inválida: la notificación no es legítima");
-      } */
-  
-      // 4. Procesa la notificación recibida
-      const notification = req.body;
-      console.log("Notificación recibida:", notification);
-  
-      let metadata;
-      let paymentId;
-  
-      // Caso 1: Notificación de pago
-      if (
-        notification.action === "payment.updated" &&
-        notification.data.status === "approved"
-      ) {
-        paymentId = notification.data.id;
-        metadata = notification.data.metadata;
-  
-        // Si la metadata no está presente, consultamos directamente la API de pagos
-        if (!metadata) {
-          try {
-            const response = await axios.get(
-              `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${ACCESS_TOKEN_PRUEBA}`
-            );
-            const paymentDetails = response.data;
-            console.log("Detalles completos del pago:", paymentDetails);
-            metadata = paymentDetails.metadata;
-          } catch (error) {
-            console.error("Error al obtener detalles del pago:", error);
-          }
-        }
-      }
-      // Caso 2: Notificación de orden de comerciante
-      else if (notification.type === "topic_merchant_order_wh") {
-        // Utilizamos el ID de la notificación como el ID de la orden de comerciante
-        const merchantOrderId = notification.id;
-        try {
-          // Consultamos los detalles de la orden de comerciante
-          const merchantOrderResponse = await axios.get(
-            `https://api.mercadopago.com/merchant_orders/${merchantOrderId}?access_token=${ACCESS_TOKEN_PRUEBA}`
-          );
-          const merchantOrderDetails = merchantOrderResponse.data;
-          console.log("Detalles de la orden de comerciante:", merchantOrderDetails);
-  
-          // Si la orden tiene pagos asociados, usamos el primero para obtener la metadata
-          if (
-            merchantOrderDetails.payments &&
-            merchantOrderDetails.payments.length > 0
-          ) {
-            paymentId = merchantOrderDetails.payments[0].id;
-            const paymentResponse = await axios.get(
-              `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${ACCESS_TOKEN_PRUEBA}`
-            );
-            const paymentDetails = paymentResponse.data;
-            console.log("Detalles completos del pago:", paymentDetails);
-            metadata = paymentDetails.metadata;
-          } else {
-            console.log("La orden no tiene pagos asociados.");
-          }
-        } catch (error) {
-          console.error("Error al obtener detalles de la orden:", error);
-        }
-      } else {
-        console.log("Notificación recibida pero no corresponde a un pago aprobado ni a una orden válida.");
-      }
-  
-      // 5. Si ya tenemos el paymentId y la metadata, procesamos la orden
-      if (paymentId && metadata) {
-        console.log("Pago aprobado. paymentId:", paymentId);
-        console.log("Metadata recibida:", metadata);
-  
-        // Verifica si ya existe una orden con ese paymentId para evitar duplicados
-        /* const existingOrder = await Order.findOne({ where: { paymentId } });
-        if (!existingOrder) {
-          // Crea la orden utilizando la metadata obtenida
-          const newOrder = await Order.create({
-            paymentId,
-            customer: metadata.customer,
-            items: metadata.items,
-            total: metadata.total,
-            orderDate: metadata.orderDate,
-            status: "paid",
-          });
-          console.log("Orden creada:", newOrder);
-        } else {
-          console.log("La orden ya existe. Se puede actualizar si es necesario.");
-        } */
-      } else {
-        console.log("No se pudo obtener la metadata necesaria o el pago no está aprobado.");
-      }
-  
-      // 6. Responde con 200 para confirmar la recepción del webhook
-      return res.sendStatus(200);
-    } catch (error) {
-      console.error("Error en el webhook:", error);
-      return res.sendStatus(500);
+ app.post("/webhook", async (req, res) => {
+  try {
+    // 1. Lee la firma enviada en el header
+    const signature = req.headers["x-mercadopago-signature"];
+    // Utiliza req.rawBody para calcular la firma (si no está, se serializa req.body)
+    const rawBody = req.rawBody || JSON.stringify(req.body);
+
+    // 2. Calcula la firma esperada utilizando HMAC-SHA256 y la clave secreta
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.MP_WEBHOOK_SECRET)
+      .update(rawBody)
+      .digest("hex");
+
+    // 3. (Opcional) Compara ambas firmas para validar la notificación
+    /*
+    if (signature !== expectedSignature) {
+      console.error("Firma inválida:", { signature, expectedSignature });
+      return res.status(401).send("Firma inválida: la notificación no es legítima");
     }
-  });
+    */
+
+    // 4. Procesa la notificación recibida
+    const notification = req.body;
+   
+
+    let metadata;
+    let paymentId;
+
+    // Caso 1: Notificación de pago aprobado
+    if (
+      notification.action === "payment.updated" &&
+      notification.data.status === "approved"
+    ) {
+      // Convierte el paymentId a cadena para evitar conflictos de tipos
+      paymentId = String(notification.data.id);
+      metadata = notification.data.metadata;
+
+      // Si la metadata no está presente, consultamos directamente la API de pagos
+      if (!metadata) {
+        try {
+          const response = await axios.get(
+            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+          );
+          const paymentDetails = response.data;
+      
+          metadata = paymentDetails.metadata;
+        } catch (error) {
+          console.error("Error al obtener detalles del pago:", error);
+        }
+      }
+    }
+    // Caso 2: Notificación de orden de comerciante
+    else if (notification.type === "topic_merchant_order_wh") {
+      const merchantOrderId = notification.id;
+      try {
+        const merchantOrderResponse = await axios.get(
+          `https://api.mercadopago.com/merchant_orders/${merchantOrderId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+        );
+        const merchantOrderDetails = merchantOrderResponse.data;
+        console.log("Detalles de la orden de comerciante:", merchantOrderDetails);
+
+        if (
+          merchantOrderDetails.payments &&
+          merchantOrderDetails.payments.length > 0
+        ) {
+          // Convierte el paymentId a cadena
+          paymentId = String(merchantOrderDetails.payments[0].id);
+          const paymentResponse = await axios.get(
+            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+          );
+          const paymentDetails = paymentResponse.data;
+          console.log("Detalles completos del pago:", paymentDetails);
+          metadata = paymentDetails.metadata;
+        } else {
+          console.log("La orden no tiene pagos asociados.");
+        }
+      } catch (error) {
+        console.error("Error al obtener detalles de la orden:", error);
+      }
+    } else {
+      console.log("Notificación recibida pero no corresponde a un pago aprobado ni a una orden válida.");
+    }
+
+    // 5. Si ya tenemos el paymentId y la metadata, procesamos la orden y sus productos
+    if (paymentId && metadata) {
+  
+
+      const orderData = {
+        paymentId, // Almacenado como cadena
+        user_id: metadata.customer.id,
+        finalPrice: parseFloat(metadata.total),
+        discountPercentage: 0,
+        status: "paid"
+      };
+
+      // Verifica si ya existe una orden con ese paymentId
+
+      const existingOrder = await Orden.findOne({ where: { paymentId } });
+      console.log(existingOrder, "existing")
+
+      if (!existingOrder) {
+        const newOrder = await Orden.create(orderData);
+     
+
+        if (metadata.items && Array.isArray(metadata.items)) {
+          for (const item of metadata.items) {
+            let productType;
+            if (item.category === "motores") {
+              productType = "motor";
+            } else if (item.category === "reductores") {
+              productType = "reductor";
+            } else if (item.category === "convertidores") {
+              productType = "convertidor";
+            } else if (item.category === "arranquesuave") {
+              productType = "arranqueSuave";
+            } else {
+              productType = item.category; // Fallback
+            }
+
+            await OrderProduct.create({
+              order_id: newOrder.id,
+              product_id: item.id,
+              product_type: productType,
+              quantity: item.quantity,
+              unitPrice: item.price
+            });
+          }
+          console.log("Detalles de productos insertados en order_products.");
+        } else {
+          console.log("No hay items en la metadata para crear order products.");
+        }
+      } else {
+        console.log("La orden ya existe. Se puede actualizar si es necesario.");
+      }
+    } else {
+      console.log("No se pudo obtener la metadata necesaria o el pago no está aprobado.");
+    }
+
+    // 6. Responde con 200 para confirmar la recepción del webhook
+    return res.sendStatus(200);
+  } catch (error) {
+    console.error("Error en el webhook:", error);
+    return res.sendStatus(500);
+  }
+});
+  
   
   app.use("/api/motores",motorRouter)
   app.use("/api/reductores",reductorRouter)
@@ -163,6 +198,9 @@ app.use((err, req, res, next) => {
   app.use("/api/pagos",pagosRouter)
   app.use("/api/arranquesuave",arranqueSuaveRouter)
   app.use("/api/convertidores",convertidorRouter)
+  app.use("/api/ordenes", OrdenesRouter)
+
+
 // 🔹 Función para precargar un administrador
 const precargarAdmin = async () => {
   try {
