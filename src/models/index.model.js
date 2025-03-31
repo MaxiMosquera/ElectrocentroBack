@@ -4,6 +4,9 @@ import Motor from './motores.model.js';
 import Reductor from './reductores.model.js';
 import Tipo_entrada from './tipoEntrada.model.js';
 import Usuario from './usuarios.model.js';
+import Orden from './orden.model.js';
+import Convertidor from './convertidores.models.js';
+import ArranqueSuave from './arranquesuave.model.js';
 
 // ======================
 //   Relaciones
@@ -39,6 +42,11 @@ Tipo_entrada.hasMany(Reductor, {
   as: 'reductores_entrada'
 });
 
+Usuario.hasMany(Orden, {
+  foreignKey: "user_id",
+  as: "ordenes"
+});
+
 // ======================
 //   Relaciones con Users
 // ======================
@@ -62,6 +70,11 @@ Reductor.belongsTo(Usuario, {
   foreignKey: 'user_id',
   as: 'usuario'
 });
+Orden.belongsTo(Usuario, {
+  foreignKey: "user_id",
+  as: "usuario"  
+});
+
 // Nota: según lo indicado, Motor no se relaciona con estos modelos
 
 // ======================
@@ -73,5 +86,8 @@ export {
   Motor,
   Reductor,
   Tipo_entrada,
-  Usuario
+  Usuario,
+  Orden,
+  Convertidor,
+  ArranqueSuave
 };

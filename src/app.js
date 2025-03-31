@@ -1,4 +1,3 @@
-
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -14,6 +13,9 @@ import fijacion_salidaRouter from "../src/routes/fijacionSalida.routes.js"
 import eje_salidaRouter from "../src/routes/ejeSalida.routes.js"
 import tipo_entradaRouter from "../src/routes/tipoEntrada.routes.js"
 import pagosRouter from "../src/routes/pagos.routes.js"
+import arranqueSuaveRouter from "../src/routes/arranquesuave.routes.js"
+import convertidorRouter from "../src/routes/convertidor.routes.js"
+
 import crypto from "crypto";
 import axios from "axios";
 import { read } from "fs";
@@ -159,6 +161,8 @@ app.use((err, req, res, next) => {
   app.use("/api/ejes-salida",eje_salidaRouter)
   app.use("/api/tipos-entrada",tipo_entradaRouter)
   app.use("/api/pagos",pagosRouter)
+  app.use("/api/arranquesuave",arranqueSuaveRouter)
+  app.use("/api/convertidores",convertidorRouter)
 // 🔹 Función para precargar un administrador
 const precargarAdmin = async () => {
   try {
