@@ -1,4 +1,4 @@
-import { sendMail } from '../services/mailService.js';
+import { sendMail } from '../services/mail.service.js';
 import { generateToken } from '../utils/token.js';
 import dotenv from "dotenv"
 

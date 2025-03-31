@@ -1,4 +1,4 @@
-import ArranqueSuave from "../models/index.model.js";
+import { ArranqueSuave } from "../models/index.model.js";
 
 export const getAllArranqueSuave = async (req, res) => {
     try {
