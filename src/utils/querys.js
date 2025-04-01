@@ -954,4 +954,366 @@ VALUES
 (17678185, 110.0, 60.0, 90.0, 2.0, 1.4, 1, 1, 1, 597.3, NULL, NULL, now(), now(), 1),
 (17678186, 110.0, 80.0, 90.0, 1.5, 1.3, 1, 1, 1, 597.3, NULL, NULL, now(), now(), 1);
 
-//
+//arranque suave
+
+-- =====================================
+-- ==========  SSW05  ==================
+-- =====================================
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES 
+(10413826, 'SSW05 0003 T 2246 SPZ', 'Alimentación Trifásica 220-460Vca', '220-460Vca', '3A', '1,5/1,1 (hp/kW)', 1, 'SSW05', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10413820, 'SSW05 0010 T 2246 SPZ', 'Alimentación Trifásica 220-460Vca', '220-460Vca', '10A', '5,5/4 (hp/kW)', 1, 'SSW05', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10413821, 'SSW05 0016 T 2246 SPZ', 'Alimentación Trifásica 220-460Vca', '220-460Vca', '16A', '10/5,5 (hp/kW)', 1, 'SSW05', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10413822, 'SSW05 0023 T 2246 SPZ', 'Alimentación Trifásica 220-460Vca', '220-460Vca', '23A', '15/11 (hp/kW)', 1, 'SSW05', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10413823, 'SSW05 0030 T 2246 SPZ', 'Alimentación Trifásica 220-460Vca', '220-460Vca', '30A', '20/15 (hp/kW)', 1, 'SSW05', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10413824, 'SSW05 0045 T 2246 SPZ', 'Alimentación Trifásica 220-460Vca', '220-460Vca', '45A', '30/22 (hp/kW)', 2, 'SSW05', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10328761, 'SSW05 0060 T 2246 SPZ', 'Alimentación Trifásica 220-460Vca', '220-460Vca', '60A', '40/30 (hp/kW)', 2, 'SSW05', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10413825, 'SSW05 0085 T 2246 SPZ', 'Alimentación Trifásica 220-460Vca', '220-460Vca', '85A', '60/45 (hp/kW)', 2, 'SSW05', NOW(), NOW());
+
+-- =====================================
+-- ==========  SSW07  ==================
+-- =====================================
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10194170, 'EX SSW07 0017 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '17A', '10/7.5 (hp/kW)', 1, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10194171, 'EX SSW07 0024 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '24A', '15/11 (hp/kW)', 1, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10194172, 'EX SSW07 0030 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '30A', '20/15 (hp/kW)', 1, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10194173, 'EX SSW07 0045 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '45A', '30/20 (hp/kW)', 2, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10194174, 'EX SSW07 0061 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '61A', '40/30 (hp/kW)', 2, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10194175, 'EX SSW07 0085 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '85A', '60/45 (hp/kW)', 2, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10194176, 'EX SSW07 0130 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '130A', '75/55 (hp/kW)', 3, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10194177, 'EX SSW07 0170 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '170A', '125/90 (hp/kW)', 3, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10233130, 'EX SSW07 0200 T5 5Z', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '200A', '150/110 (hp/kW)', 3, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10233131, 'EX SSW07 0255 T5 5HZ', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '255A', '175/132 (hp/kW)', 4, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(10433537, 'EX SSW07 0312 T5 5HZ', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '312A', '200/150 (hp/kW)', 4, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(11044369, 'EX SSW07 0365 T5 5HZ', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '365A', '250/185 (hp/kW)', 4, 'SSW07', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(11043731, 'EX SSW07 0412 T5 5HZ', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '412A', '300/225 (hp/kW)', 4, 'SSW07', NOW(), NOW());
+
+-- =====================================
+-- ==========  SSW900  =================
+-- =====================================
+-- Para “tamaño” mapeamos B→2, C→3, D→4, E→5, F→6, etc.
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(12956628, 'SSW900 B 0085 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '85A', '60/45 (hp/kW)', 2, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(12956625, 'SSW900 B 0105 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '105A', '75/55 (hp/kW)', 2, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(12956521, 'SSW900 C 0130 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '130A', '100/75 (hp/kW)', 3, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(12956589, 'SSW900 C 0170 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '170A', '125/90 (hp/kW)', 3, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(12960999, 'SSW900 C 0200 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '205A', '150/110 (hp/kW)', 3, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(13256760, 'SSW900 D 0255 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '255A', '175/132 (hp/kW)', 4, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(13256763, 'SSW900 D 0312 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '312A', '200/150 (hp/kW)', 4, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(13256770, 'SSW900 D 0365 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '365A', '250/185 (hp/kW)', 4, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(13256776, 'SSW900 D 0412 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '412A', '300/225 (hp/kW)', 4, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(14411913, 'SSW900 E 0604 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '604A', '450/330 (hp/kW)', 5, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(14418885, 'SSW900 E 0820 T5 E2', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '820A', '550/370 (hp/kW)', 5, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(14419091, 'SSW900 F 0950 T5 E4', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '950A', '700/550 (hp/kW)', 6, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(14419096, 'SSW900 G 1100 T5 E4', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '1100A', '800/600 (hp/kW)', 6, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(14419099, 'SSW900 G 1250 T5 E4', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '1250A', '900/700 (hp/kW)', 6, 'SSW900', NOW(), NOW());
+
+INSERT INTO public.arranquesuaves
+("codigo","referencia","alimentacion","tension","corriente","potencia","tamaño","serie","createdAt","updatedAt")
+VALUES
+(14419109, 'SSW900 G 1400 T5 E4', 'Alimentación Trifásica 220-575Vca', '220-575Vca', '1400A', '1000/750 (hp/kW)', 6, 'SSW900', NOW(), NOW());
+
+
+//---------------------------------- convertidores ------------------
+
+INSERT INTO public.convertidors(
+  referencia, alimentacion, tension, corriente, potencia, serie,
+  "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+)
+VALUES
+('CFW300 A 02P6 NBS220',
+ 'Monofásica','200-240 Vca','2.6A','0.5hp','CFW300',
+  NOW(),NOW(),13059320,false,'A');
+
+INSERT INTO public.convertidors(
+  referencia, alimentacion, tension, corriente, potencia, serie,
+  "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+)
+VALUES
+('CFW300 A 04P2 NBS220',
+ 'Monofásica','200-240 Vca','4A','1hp','CFW300',
+  NOW(),NOW(),13059321,false,'A');
+
+INSERT INTO public.convertidors(
+  referencia, alimentacion, tension, corriente, potencia, serie,
+  "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+)
+VALUES
+('CFW300 A 07P3 NBS220',
+ 'Monofásica','200-240 Vca','7.3A','2hp','CFW300',
+  NOW(),NOW(),13059418,false,'A');
+
+INSERT INTO public.convertidors(
+  referencia, alimentacion, tension, corriente, potencia, serie,
+  "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+)
+VALUES
+('CFW300 B 10P0 B2D2B0',
+ 'Monofásica','200-240 Vca','10A','3hp','CFW300',
+  NOW(),NOW(),13059419,false,'B');
+  INSERT INTO public.convertidors(
+    referencia, alimentacion, tension, corriente, potencia, serie,
+    "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+  )
+  VALUES
+  ('CFW300 A 01P1 T4 NB20',
+   'Trifásica','380-480 Vca','1.1A','0.5hp','CFW300',
+    NOW(),NOW(),14146770,false,'A');
+  
+  INSERT INTO public.convertidors(
+    referencia, alimentacion, tension, corriente, potencia, serie,
+    "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+  )
+  VALUES
+  ('CFW300 A 02P6 T4 NB20',
+   'Trifásica','380-480 Vca','2.6A','1hp','CFW300',
+    NOW(),NOW(),14146822,false,'A');
+  
+  INSERT INTO public.convertidors(
+    referencia, alimentacion, tension, corriente, potencia, serie,
+    "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+  )
+  VALUES
+  ('CFW300 A 04P8 T4 NB20',
+   'Trifásica','380-480 Vca','4.8A','2hp','CFW300',
+    NOW(),NOW(),14146882,false,'A');
+  
+  INSERT INTO public.convertidors(
+    referencia, alimentacion, tension, corriente, potencia, serie,
+    "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+  )
+  VALUES
+  ('CFW300 B 06P5 T4 DB20',
+   'Trifásica','380-480 Vca','6.5A','3hp','CFW300',
+    NOW(),NOW(),14148361,true,'B');
+  
+  INSERT INTO public.convertidors(
+    referencia, alimentacion, tension, corriente, potencia, serie,
+    "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+  )
+  VALUES
+  ('CFW300 C 10P0 T4 DB20',
+   'Trifásica','380-480 Vca','10A','5.5hp','CFW300',
+    NOW(),NOW(),14148365,true,'C');
+  
+  INSERT INTO public.convertidors(
+    referencia, alimentacion, tension, corriente, potencia, serie,
+    "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+  )
+  VALUES
+  ('CFW300 C 12P0 T4 DB20',
+   'Trifásica','380-480 Vca','12A','7.5hp','CFW300',
+    NOW(),NOW(),14148366,true,'C');
+  
+  INSERT INTO public.convertidors(
+    referencia, alimentacion, tension, corriente, potencia, serie,
+    "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+  )
+  VALUES
+  ('CFW300 C 15P0 T4 DB20',
+   'Trifásica','380-480 Vca','16A','10hp','CFW300',
+    NOW(),NOW(),14148367,true,'C');
+    INSERT INTO public.convertidors(
+      referencia, alimentacion, tension, corriente, potencia, serie,
+      "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+    )
+    VALUES
+    ('CFW500 A 02P6 S2 NB20 G2',
+     'Monofásica','200-240 Vca','2.6A','0.5hp','CFW500',
+      NOW(),NOW(),15571943,false,'A');
+    
+    INSERT INTO public.convertidors(
+      referencia, alimentacion, tension, corriente, potencia, serie,
+      "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+    )
+    VALUES
+    ('CFW500 A 04P3 S2 NB20 G2',
+     'Monofásica','200-240 Vca','4.3A','1hp','CFW500',
+      NOW(),NOW(),15571953,false,'A');
+    
+    INSERT INTO public.convertidors(
+      referencia, alimentacion, tension, corriente, potencia, serie,
+      "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+    )
+    VALUES
+    ('CFW500 A 07P0 S2 NB20 G2',
+     'Monofásica','200-240 Vca','7A','2hp','CFW500',
+      NOW(),NOW(),15572017,false,'A');
+    
+    INSERT INTO public.convertidors(
+      referencia, alimentacion, tension, corriente, potencia, serie,
+      "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+    )
+    VALUES
+    ('CFW500 B 10P0 B2 NB20 G2',
+     'Monofásica','200-240 Vca','10A','3hp','CFW500',
+      NOW(),NOW(),15572056,true,'B');
+      INSERT INTO public.convertidors(
+        referencia, alimentacion, tension, corriente, potencia, serie,
+        "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+      )
+      VALUES
+      ('CFW500 A 02P6 T4 NB20 G2',
+       'Trifásica','380-480 Vca','2.6A','1hp','CFW500',
+        NOW(),NOW(),15573719,false,'A');
+      
+      INSERT INTO public.convertidors(
+        referencia, alimentacion, tension, corriente, potencia, serie,
+        "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+      )
+      VALUES
+      ('CFW500 B 06P5 T4 NB20 G2',
+       'Trifásica','380-480 Vca','6.5A','3hp','CFW500',
+        NOW(),NOW(),15577021,false,'B');
+      
+      INSERT INTO public.convertidors(
+        referencia, alimentacion, tension, corriente, potencia, serie,
+        "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+      )
+      VALUES
+      ('CFW500 B 06P5 T4 DB20 G2',
+       'Trifásica','380-480 Vca','6.5A','3hp','CFW500',
+        NOW(),NOW(),15575665,true,'B');
+      
+      INSERT INTO public.convertidors(
+        referencia, alimentacion, tension, corriente, potencia, serie,
+        "createdAt", "updatedAt", codigo, frenado_incluido, "tamaño"
+      )
+      VALUES
+      ('CFW500 C 10P0 T4 DB20 G2',
+       'Trifásica','380-480 Vca','10A','5hp','CFW500',
+        NOW(),NOW(),15575701,true,'C');
+            

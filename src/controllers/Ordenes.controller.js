@@ -8,6 +8,7 @@ import OrderProduct from "../models/orderProducts.model.js";
 import Reductor from "../models/reductores.model.js";
 
 export const getOrderByPaymentId = async (req, res) => {
+  console.log("gere")
   try {
     const { paymentId } = req.params;
     // Buscamos la orden que tenga el paymentId (se asume que se guardó como cadena)

@@ -38,6 +38,10 @@ const Convertidor = sequelize.define("convertidor", {
     type: DataTypes.ENUM("CFW300", "CFW500"),
     allowNull: false,
   },
+  price: {
+    type: DataTypes.DECIMAL(10,2),
+    allowNull: true
+   }
 });
 
 export default Convertidor;

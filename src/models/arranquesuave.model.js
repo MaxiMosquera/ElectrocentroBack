@@ -34,6 +34,10 @@ const ArranqueSuave = sequelize.define("arranquesuave", {
     type: DataTypes.ENUM("SSW05", "SSW07","SSW900"),
     allowNull: false,
   },
+  price: {
+   type: DataTypes.DECIMAL(10,2),
+   allowNull: true
+  }
 });
 
 export default ArranqueSuave;

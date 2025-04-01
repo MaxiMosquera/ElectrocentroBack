@@ -1,4 +1,9 @@
 import { mercadoClient, Preference } from "../config/mercadoPago.js";
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+console.log(process.env.FRONTEND_URL, "URL")
 
 export const createPreference = async (req, res) => {
   try {
@@ -20,7 +25,7 @@ export const createPreference = async (req, res) => {
         currency_id: "ARS",
       })),
       back_urls: {
-        success: "http://localhost:5173/compra-exitosa",
+        success: `${process.env.FRONTEND_URL}/compra-exitosa`,
         failure: "http://localhost:5173/compra-fallida",
         pending: "http://localhost:5173/pending",
       },
