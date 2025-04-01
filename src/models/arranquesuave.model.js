@@ -10,6 +10,10 @@ const ArranqueSuave = sequelize.define("arranquesuave", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  codigo: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   tension: {
     type: DataTypes.STRING,
     allowNull: false,

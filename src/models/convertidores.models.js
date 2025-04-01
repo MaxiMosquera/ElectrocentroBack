@@ -10,6 +10,10 @@ const Convertidor = sequelize.define("convertidor", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  codigo: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   tension: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -25,6 +29,10 @@ const Convertidor = sequelize.define("convertidor", {
   tamaño: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  frenado_incluido: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false
   },
   serie: {
     type: DataTypes.ENUM("CFW300", "CFW500"),

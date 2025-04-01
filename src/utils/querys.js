@@ -2,7 +2,7 @@
 
 INSERT INTO "fijacion_salida" ("codigo", "tamanio", "precio", "tipo", "createdAt", "updatedAt")
 VALUES
-
+  (0,0,0,"carcasa", NOW(), NOW())
   (17675993, 30, 11.0, 'brazo', NOW(), NOW()),
   (17675994, 40, 12.3, 'brazo', NOW(), NOW()),
   (17675995, 50, 14.7, 'brazo',  NOW(), NOW()),
@@ -46,7 +46,7 @@ VALUES
   (17676048, 'macizo doble', 90, 33.3, NOW(), NOW()),
   (17676039, 'macizo doble', 110, 51.6, NOW(), NOW());
 
-//---------- eje de salida ---------------------
+//---------- TIPO DE ENTRADA ---------------------
 
 INSERT INTO public.tipo_entrada(
     tipo, "createdAt", "updatedAt")
