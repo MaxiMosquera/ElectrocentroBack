@@ -15,6 +15,7 @@ import tipo_entradaRouter from "../src/routes/tipoEntrada.routes.js"
 import pagosRouter from "../src/routes/pagos.routes.js"
 import arranqueSuaveRouter from "../src/routes/arranquesuave.routes.js"
 import convertidorRouter from "../src/routes/convertidor.routes.js"
+import mailRouter from "../src/routes/mail.routes.js"
 import OrdenesRouter from './routes/Ordenes.routes.js'
 
 import crypto from "crypto";
@@ -198,6 +199,7 @@ app.use((err, req, res, next) => {
   app.use("/api/pagos",pagosRouter)
   app.use("/api/arranquesuave",arranqueSuaveRouter)
   app.use("/api/convertidores",convertidorRouter)
+  app.use("/api/mail",mailRouter)
   app.use("/api/ordenes", OrdenesRouter)
 
 
