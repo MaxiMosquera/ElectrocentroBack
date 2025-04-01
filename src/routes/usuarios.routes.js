@@ -8,7 +8,7 @@ const router = express.Router();
 //rutas publicas
 
 router.put("/",validateToken, updateUser);
-router.delete("/:id",deleteUser);
+router.delete("/:id",validateToken, deleteUser);
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/forgot-password', requestPasswordReset);
