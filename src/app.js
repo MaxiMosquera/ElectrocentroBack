@@ -250,8 +250,8 @@ sequelize
     if (isProduction) {
       // En producción se levanta HTTPS usando los certificados
       // Ajusta nombres/rutas de tus archivos de certificados
-      const privateKey = fs.readFileSync("./private.key", "utf8");
-      const certificate = fs.readFileSync("./certificate.crt", "utf8");
+      const privateKey = fs.readFileSync("./certificados/private.key", "utf8");
+      const certificate = fs.readFileSync("./certificados/certificate.crt", "utf8");
 
       const credentials = {
         key: privateKey,
