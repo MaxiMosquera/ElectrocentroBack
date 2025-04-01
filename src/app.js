@@ -170,6 +170,8 @@ app.use((err, req, res, next) => {
               unitPrice: item.price
             });
           }
+
+          
           console.log("Detalles de productos insertados en order_products.");
         } else {
           console.log("No hay items en la metadata para crear order products.");

@@ -1,4 +1,4 @@
-import { sendMail } from '../services/mailService.js';
+import { sendMail } from '../services/mail.service.js';
 import { generateToken } from '../utils/token.js';
 import dotenv from "dotenv"
 
@@ -43,6 +43,7 @@ export const confirmRegister = async (req, res) => {
 // 📩 Formulario de contacto
 export const contactForm = async (req, res) => {
   const { email, name, message } = req.body;
+  console.log(req.body, "body")
   try {
     const html = `
       <h2>Consulta desde el formulario</h2>

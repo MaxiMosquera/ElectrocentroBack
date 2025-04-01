@@ -1,5 +1,11 @@
+import ArranqueSuave from "../models/arranquesuave.model.js";
+import Convertidor from "../models/convertidores.models.js";
+import Eje_salida from "../models/ejeSalida.model.js";
+import Fijacion_salida from "../models/fijacionSalida.model.js";
+import Motor from "../models/motores.model.js";
 import Orden from "../models/orden.model.js";
 import OrderProduct from "../models/orderProducts.model.js";
+import Reductor from "../models/reductores.model.js";
 
 export const getOrderByPaymentId = async (req, res) => {
   try {
@@ -26,26 +32,71 @@ export const getOrderByPaymentId = async (req, res) => {
   }
 };
 
+
+
 export const getOrdersByUserId = async (req, res) => {
-  console.log(req.body, "req")
   try {
     const { userId } = req.params;
-    console.log(userId, "id")
     const orders = await Orden.findAll({
       where: { user_id: userId },
       include: [
         {
           model: OrderProduct,
-          as: "order_products",
-        },
-      ],
+          as: 'order_products',
+          include: [
+            { model: Motor, as: 'motor', required: false },
+            { model: Reductor, as: 'reductor', required: false },
+            { model: ArranqueSuave, as: 'arranquesuave', required: false },
+            { model: Convertidor, as: 'convertidor', required: false },
+            { model: Eje_salida, as: 'eje_salida', required: false },
+            { model: Fijacion_salida, as: 'fijacion_salida', required: false },
+          ]
+        }
+      ]
     });
-
-    console.log(orders, "order")
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "No se encontraron órdenes para este usuario." });
     }
+
+    // Post-procesamiento: asignar la información del producto en un campo unificado 'product'
+    orders.forEach(order => {
+      order.order_products.forEach(op => {
+        let product;
+        switch (op.product_type) {
+          case 'motor':
+            product = op.motor;
+            break;
+          case 'reductor':
+            product = op.reductor;
+            break;
+          case 'arranquesuave':
+            product = op.arranquesuave;
+            break;
+          case 'convertidor':
+            product = op.convertidor;
+            break;
+          case 'eje_salida':
+            product = op.eje_salida;
+            break;
+          case 'fijacion_salida':
+            product = op.fijacion_salida;
+            break;
+          default:
+            product = null;
+        }
+        // Se agrega la propiedad 'product' para facilitar el consumo en el front
+        op.dataValues.product = product;
+
+        // Elimina los campos redundantes para evitar duplicación
+        delete op.dataValues.motor;
+        delete op.dataValues.reductor;
+        delete op.dataValues.arranquesuave;
+        delete op.dataValues.convertidor;
+        delete op.dataValues.eje_salida;
+        delete op.dataValues.fijacion_salida;
+      });
+    });
 
     return res.json(orders);
   } catch (error) {

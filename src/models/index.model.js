@@ -89,6 +89,43 @@ OrderProduct.belongsTo(Orden, {
   as: 'orden'
 });
 
+// Relaciones polimórficas para OrderProduct
+OrderProduct.belongsTo(Motor, {
+  foreignKey: 'product_id',
+  constraints: false,
+  as: 'motor'
+});
+
+OrderProduct.belongsTo(Reductor, {
+  foreignKey: 'product_id',
+  constraints: false,
+  as: 'reductor'
+});
+
+OrderProduct.belongsTo(ArranqueSuave, {
+  foreignKey: 'product_id',
+  constraints: false,
+  as: 'arranquesuave'
+});
+
+OrderProduct.belongsTo(Convertidor, {
+  foreignKey: 'product_id',
+  constraints: false,
+  as: 'convertidor'
+});
+
+OrderProduct.belongsTo(Eje_salida, {
+  foreignKey: 'product_id',
+  constraints: false,
+  as: 'eje_salida'
+});
+
+OrderProduct.belongsTo(Fijacion_salida, {
+  foreignKey: 'product_id',
+  constraints: false,
+  as: 'fijacion_salida'
+});
+
 // ======================
 //      Exportar modelos
 // ======================

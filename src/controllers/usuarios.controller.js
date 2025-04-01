@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import nodemailer from "nodemailer";
+import { confirmRegister } from "./mail.controller.js";
 
 const  SECRET_KEY = process.env.JWT_SECRET
 
@@ -38,8 +39,11 @@ export const createUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
+
+  const id = req.user.id
+
     try {
-        const user = await User.findByPk(req.params.id);
+        const user = await Usuario.findByPk(id);
         if (user) {
             await user.update(req.body);
             res.status(200).json(user);
@@ -84,7 +88,7 @@ export const loginUser = async (req, res) => {
       const token = jwt.sign(
         { id: user.id, email: user.email, rol: user.rol }, 
         SECRET_KEY, 
-        { expiresIn: '1h' }
+        { expiresIn: '400h' }
       );
   
       // Enviar respuesta con usuario, token y descuento si aplica
@@ -92,9 +96,11 @@ export const loginUser = async (req, res) => {
         message: 'Inicio de sesión exitoso',
         user: {
           id: user.id,
-          nombre: user.nombre,
+          name: user.name,
           email: user.email,
-          rol: user.rol
+          rol: user.rol,
+          phone: user.phone,
+          address: user.address
         },
         token,
         descuento: user.rol === 3 ? "Aplica descuento especial" : "Sin descuento", // Agregamos el descuento solo si el rol es 3
@@ -144,6 +150,8 @@ export const loginUser = async (req, res) => {
         },
         token,
       });
+
+      confirmRegister()
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error al registrar usuario' });
