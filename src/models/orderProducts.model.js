@@ -29,6 +29,18 @@ const OrderProduct = sequelize.define("order_product", {
   unitPrice: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
+  },
+  fijacion_salida_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  tipo_entrada_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  eje_salida_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   }
 }, {
   tableName: "order_products",
