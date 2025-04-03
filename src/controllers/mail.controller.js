@@ -57,3 +57,23 @@ export const contactForm = async (req, res) => {
     res.status(500).json({ error: 'Error enviando correo' });
   }
 };
+export const purchaseConfirmation = async (req, res) => {
+  const { name, email, orderDetails } = req.body;
+  try {
+    const html = `
+      <h2>Confirmación de Compra</h2>
+      <p>Hola ${name},</p>
+      <p>Gracias por tu compra. A continuación, te detallamos la información de tu pedido:</p>
+      <div>
+        ${orderDetails}
+      </div>
+      <p>Si tienes alguna duda o necesitas asistencia, no dudes en contactarnos.</p>
+      <p>Saludos cordiales,</p>
+      <p>El equipo de [Tu Empresa]</p>
+    `;
+    await sendMail(email, "Detalles de tu Compra", html);
+    res.json({ message: "Correo de confirmación de compra enviado" });
+  } catch (error) {
+    res.status(500).json({ error: "Error enviando correo de confirmación de compra" });
+  }
+};

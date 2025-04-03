@@ -31,6 +31,7 @@ import arranqueSuaveRouter from "../src/routes/arranquesuave.routes.js";
 import convertidorRouter from "../src/routes/convertidor.routes.js";
 import mailRouter from "../src/routes/mail.routes.js";
 import OrdenesRouter from "./routes/Ordenes.routes.js";
+import { purchaseConfirmation } from "./controllers/mail.controller.js";
 
 dotenv.config();
 
@@ -41,8 +42,21 @@ const ACCESS_TOKEN_PRUEBA = "APP_USR-3893618639484885-032819-f5d40aa4d44244f6b55
 const app = express();
 
 // Middlewares
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://electrocentro.s3-website-us-east-1.amazonaws.com"
+];
+
 app.use(cors({
-  origin: "http://localhost:5173"
+  origin: (origin, callback) => {
+    // Permitir solicitudes sin origen (por ejemplo, desde herramientas como Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("No permitido por CORS"));
+    }
+  }
 }));
 app.use(express.json());
 app.use(morgan("dev"));
@@ -68,37 +82,32 @@ app.use("/api/convertidores", convertidorRouter);
 app.use("/api/mail", mailRouter);
 app.use("/api/ordenes", OrdenesRouter);
 
-// ----------------------------------------------------
-// Webhook (ejemplo de manejo de notificaciones MP)
-// ----------------------------------------------------
 app.post("/webhook", async (req, res) => {
   try {
-    // 1. Lee la firma enviada en el header
+    // 1. Leer la firma enviada en el header
     const signature = req.headers["x-mercadopago-signature"];
-    // Si tuvieras configurado un rawBody, lo usarías, en caso contrario usamos el body serializado
     const rawBody = req.rawBody || JSON.stringify(req.body);
 
-    // 2. Calcula la firma esperada con tu secret (si usas MP_WEBHOOK_SECRET en tu .env)
+    // 2. Calcular la firma esperada (opcional)
     const expectedSignature = crypto
       .createHmac("sha256", process.env.MP_WEBHOOK_SECRET || "SUPER_SECRET")
       .update(rawBody)
       .digest("hex");
 
-    // 3. (Opcional) Compara ambas firmas para validar la notificación
-    /*
+    /* Opcional: verificar la firma
     if (signature !== expectedSignature) {
       console.error("Firma inválida:", { signature, expectedSignature });
       return res.status(401).send("Firma inválida: la notificación no es legítima");
     }
     */
 
-    // 4. Procesa la notificación recibida
+    // 3. Procesar la notificación recibida
     const notification = req.body;
 
     let metadata;
     let paymentId;
 
-    // Caso 1: Notificación de pago aprobado
+    // Caso 1: Pago aprobado
     if (
       notification.action === "payment.updated" &&
       notification.data.status === "approved"
@@ -106,11 +115,10 @@ app.post("/webhook", async (req, res) => {
       paymentId = String(notification.data.id);
       metadata = notification.data.metadata;
 
-      // Si la metadata no está presente, consultamos la API de pagos
       if (!metadata) {
         try {
           const response = await axios.get(
-            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${process.env.ACCESS_TOKEN_PRUEBA}`
           );
           const paymentDetails = response.data;
           metadata = paymentDetails.metadata;
@@ -119,15 +127,14 @@ app.post("/webhook", async (req, res) => {
         }
       }
     }
-    // Caso 2: Notificación de orden de comerciante
+    // Caso 2: Orden de comerciante
     else if (notification.type === "topic_merchant_order_wh") {
       const merchantOrderId = notification.id;
       try {
         const merchantOrderResponse = await axios.get(
-          `https://api.mercadopago.com/merchant_orders/${merchantOrderId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+          `https://api.mercadopago.com/merchant_orders/${merchantOrderId}?access_token=${process.env.ACCESS_TOKEN_PRUEBA}`
         );
         const merchantOrderDetails = merchantOrderResponse.data;
-        console.log("Detalles de la orden de comerciante:", merchantOrderDetails);
 
         if (
           merchantOrderDetails.payments &&
@@ -135,11 +142,11 @@ app.post("/webhook", async (req, res) => {
         ) {
           paymentId = String(merchantOrderDetails.payments[0].id);
           const paymentResponse = await axios.get(
-            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${process.env.ACCESS_TOKEN_PRUEBA}`
           );
           const paymentDetails = paymentResponse.data;
-          console.log("Detalles completos del pago:", paymentDetails);
           metadata = paymentDetails.metadata;
+       
         } else {
           console.log("La orden no tiene pagos asociados.");
         }
@@ -150,51 +157,104 @@ app.post("/webhook", async (req, res) => {
       console.log("Notificación recibida pero no corresponde a un pago aprobado ni a una orden válida.");
     }
 
-    // 5. Si ya tenemos el paymentId y la metadata, procesamos la orden y sus productos
+    // 4. Si tenemos paymentId y metadata, procesamos la orden
     if (paymentId && metadata) {
       const orderData = {
-        paymentId, // Guardamos como string
+        paymentId, // Guardado como string
         user_id: metadata.customer.id,
         finalPrice: parseFloat(metadata.total),
         discountPercentage: 0,
         status: "paid",
       };
 
-      // Verificamos si ya existe una orden con ese paymentId
+      // Verificar si ya existe la orden
       const existingOrder = await Orden.findOne({ where: { paymentId } });
-      console.log("Orden existente:", existingOrder);
+ 
 
       if (!existingOrder) {
         const newOrder = await Orden.create(orderData);
-        console.log("Nueva orden creada:", newOrder);
+    
 
         if (metadata.items && Array.isArray(metadata.items)) {
           for (const item of metadata.items) {
             let productType;
-            if (item.category === "motores") {
-              productType = "motor";
-            } else if (item.category === "reductores") {
-              productType = "reductor";
-            } else if (item.category === "convertidores") {
-              productType = "convertidor";
-            } else if (item.category === "arranquesuave") {
-              productType = "arranqueSuave";
-            } else {
-              productType = item.category;
-            }
+            if (item.category === "motores") productType = "motor";
+            else if (item.category === "reductores") productType = "reductor";
+            else if (item.category === "convertidores") productType = "convertidor";
+            else if (item.category === "arranqueSuave") productType = "arranqueSuave";
+            else productType = item.category;
 
             await OrderProduct.create({
               order_id: newOrder.id,
               product_id: item.id,
               product_type: productType,
               quantity: item.quantity,
-              unitPrice: item.price
+              unitPrice: item.price,
             });
           }
-          console.log("Detalles de productos insertados en order_products.");
+        
         } else {
           console.log("No hay items en la metadata para crear order products.");
         }
+
+        // 5. Preparar los datos para enviar el correo de confirmación
+
+        // Usar datos de metadata.customer o, si faltan, consultar al modelo User
+        let customerName = metadata.customer.name;
+        let customerEmail = metadata.customer.email;
+        if ((!customerName || !customerEmail) && metadata.customer.id) {
+          const userData = await User.findOne({ where: { id: metadata.customer.id } });
+          if (userData) {
+            customerName = userData.name;
+            customerEmail = userData.email;
+          }
+        }
+
+        // Armar el detalle de los ítems en HTML (por ejemplo, una tabla)
+        let itemsHtml = "";
+        if (metadata.items && Array.isArray(metadata.items)) {
+          for (const item of metadata.items) {
+            itemsHtml += `
+              <tr>
+                <td>${item.name}</td>
+                <td>${item.category}</td>
+                <td>${item.quantity}</td>
+                <td>${item.price}</td>
+              </tr>
+            `;
+          }
+        }
+
+        const orderDetails = `
+          <p><strong>Fecha de Orden:</strong> ${new Date(metadata.order_date).toLocaleString()}</p>
+          <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml}
+            </tbody>
+          </table>
+          <p><strong>Total:</strong> $${metadata.total}</p>
+        `;
+
+        // 6. Enviar el correo de confirmación usando la función purchaseConfirmation.
+        // Para reutilizarla, simulamos un objeto req con los datos necesarios.
+        const emailReq = {
+          body: {
+            name: customerName,
+            email: customerEmail,
+            orderDetails,
+          },
+        };
+        // Nota: purchaseConfirmation enviará la respuesta final. Por ello, retornamos después.
+        await purchaseConfirmation(emailReq, res);
+        return;
       } else {
         console.log("La orden ya existe. Se puede actualizar si es necesario.");
       }
@@ -202,7 +262,6 @@ app.post("/webhook", async (req, res) => {
       console.log("No se pudo obtener la metadata necesaria o el pago no está aprobado.");
     }
 
-    // 6. Responde con 200 para confirmar la recepción del webhook
     return res.sendStatus(200);
   } catch (error) {
     console.error("Error en el webhook:", error);
