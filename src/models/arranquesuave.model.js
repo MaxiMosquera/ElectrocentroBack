@@ -24,19 +24,23 @@ const ArranqueSuave = sequelize.define("arranquesuave", {
   },
   potencia: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
   tamaño: {
     type: DataTypes.INTEGER, ///1,2,3
-    allowNull: false,
+    allowNull: false
   },
-  serie: {
+  modelo: {
     type: DataTypes.ENUM("SSW05", "SSW07","SSW900"),
-    allowNull: false,
+    allowNull: false
   },
   price: {
    type: DataTypes.DECIMAL(10,2),
-   allowNull: true
+   allowNull: false
+  },
+  control: {
+    type: DataTypes.INTEGER, //2 o 3
+    allowNull: false
   }
 });
 

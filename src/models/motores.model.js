@@ -34,7 +34,7 @@ const Motor = sequelize.define('motor', {
     allowNull: true
   },
   codigo: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(30),
     allowNull: true
   },
   precio: {
@@ -76,6 +76,10 @@ const Motor = sequelize.define('motor', {
   descuento_porcentaje: {
     type: DataTypes.INTEGER,
     allowNull: true
+  },
+  grado_ip:{
+    type: DataTypes.STRING,
+    allowNull: false
   }
 }, {
   tableName: 'motor',

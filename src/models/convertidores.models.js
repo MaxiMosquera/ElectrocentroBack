@@ -34,7 +34,7 @@ const Convertidor = sequelize.define("convertidor", {
     type: DataTypes.BOOLEAN,
     allowNull: false
   },
-  serie: {
+  modelo: {
     type: DataTypes.ENUM("CFW300", "CFW500"),
     allowNull: false,
   },
