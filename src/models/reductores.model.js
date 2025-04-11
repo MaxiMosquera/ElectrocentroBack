@@ -34,7 +34,7 @@ const Reductor = sequelize.define('reductor', {
     allowNull: true
   },
   fijacion_salida_id: {
-    type: DataTypes.INTEGER, // Almacena la fecha de expiración del token
+    type: DataTypes.INTEGER,
     default: 0,
     allowNull: false
   },

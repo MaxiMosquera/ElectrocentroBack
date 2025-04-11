@@ -83,17 +83,20 @@ app.use("/api/convertidores", convertidorRouter);
 app.use("/api/mail", mailRouter);
 app.use("/api/ordenes", OrdenesRouter);
 
+/**
+ * Webhook para Mercado Pago
+ */
 app.post("/webhook", async (req, res) => {
   try {
     // 1. Leer la firma enviada en el header
-    const signature = req.headers["x-mercadopago-signature"]
-    const rawBody = req.rawBody || JSON.stringify(req.body)
+    const signature = req.headers["x-mercadopago-signature"];
+    const rawBody = req.rawBody || JSON.stringify(req.body);
 
     // 2. Calcular la firma esperada (opcional)
     const expectedSignature = crypto
       .createHmac("sha256", process.env.MP_WEBHOOK_SECRET || "SUPER_SECRET")
       .update(rawBody)
-      .digest("hex")
+      .digest("hex");
 
     /* Opcional: verificar la firma
     if (signature !== expectedSignature) {
@@ -103,194 +106,191 @@ app.post("/webhook", async (req, res) => {
     */
 
     // 3. Procesar la notificación recibida
-    const notification = req.body
+    const notification = req.body;
+    console.log(notification, "notification");
 
-    let metadata
-    let paymentId
+    let metadata;
+    let paymentId;
 
     // Caso 1: Pago aprobado
-    if (notification.action === "payment.updated" && notification.data.status === "approved") {
-      paymentId = String(notification.data.id)
-      metadata = notification.data.metadata
+    if (
+      notification.action === "payment.updated" &&
+      notification.data.status === "approved"
+    ) {
+      paymentId = String(notification.data.id);
+      metadata = notification.data.metadata;
 
       if (!metadata) {
         try {
           const response = await axios.get(
-            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${process.env.ACCESS_TOKEN_PRUEBA}`,
-          )
-          const paymentDetails = response.data
-          metadata = paymentDetails.metadata
+            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+          );
+          const paymentDetails = response.data;
+          metadata = paymentDetails.metadata;
         } catch (error) {
-          console.error("Error al obtener detalles del pago:", error)
+          console.error("Error al obtener detalles del pago:", error);
         }
       }
     }
     // Caso 2: Orden de comerciante
     else if (notification.type === "topic_merchant_order_wh") {
-      const merchantOrderId = notification.id
+      const merchantOrderId = notification.id;
       try {
         const merchantOrderResponse = await axios.get(
-          `https://api.mercadopago.com/merchant_orders/${merchantOrderId}?access_token=${process.env.ACCESS_TOKEN_PRUEBA}`,
-        )
-        const merchantOrderDetails = merchantOrderResponse.data
+          `https://api.mercadopago.com/merchant_orders/${merchantOrderId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+        );
+        const merchantOrderDetails = merchantOrderResponse.data;
 
-        if (merchantOrderDetails.payments && merchantOrderDetails.payments.length > 0) {
-          paymentId = String(merchantOrderDetails.payments[0].id)
+        if (
+          merchantOrderDetails.payments &&
+          merchantOrderDetails.payments.length > 0
+        ) {
+          paymentId = String(merchantOrderDetails.payments[0].id);
           const paymentResponse = await axios.get(
-            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${process.env.ACCESS_TOKEN_PRUEBA}`,
-          )
-          const paymentDetails = paymentResponse.data
-          metadata = paymentDetails.metadata
+            `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${ACCESS_TOKEN_PRUEBA}`
+          );
+          const paymentDetails = paymentResponse.data;
+          metadata = paymentDetails.metadata;
         } else {
-          console.log("La orden no tiene pagos asociados.")
+          console.log("La orden no tiene pagos asociados.");
         }
       } catch (error) {
-        console.error("Error al obtener detalles de la orden:", error)
+        console.error("Error al obtener detalles de la orden:", error);
       }
     } else {
-      console.log("Notificación recibida pero no corresponde a un pago aprobado ni a una orden válida.")
+      console.log(
+        "Notificación recibida pero no corresponde a un pago aprobado ni a una orden válida."
+      );
     }
 
-    // 4. Si tenemos paymentId y metadata, procesamos la orden
+    // 4. Si tenemos paymentId y metadata, ACTUALIZAMOS la orden existente a "paid"
     if (paymentId && metadata) {
- 
-
-      const orderData = {
-        paymentId, // Guardado como string
-        user_id: metadata.customer.id,
-        finalPrice: Number.parseFloat(metadata.total),
-        discountPercentage: 0,
-        status: "paid",
-      }
-
-      // Verificar si ya existe la orden
-      const existingOrder = await Orden.findOne({ where: { paymentId } })
+      // IMPORTANTE: ahora usamos metadata.orderId (o como quieras llamarlo)
+      // en vez de crear una nueva orden. Asegúrate de que, al crear la preferencia,
+      // guardes "metadata.orderId = <ID de la orden>".
+      const existingOrder = await Orden.findByPk(metadata.orderId);
 
       if (!existingOrder) {
-        const newOrder = await Orden.create(orderData)
+        console.log("No se encontró la orden con ese ID en la BD.");
+      } else {
+        // Si la orden no está pagada, la marcamos como 'paid' y agregamos el paymentId
+        if (existingOrder.status !== "paid") {
+          await existingOrder.update({
+            paymentId,
+            status: "paid",
+          });
 
-        // Preparar para guardar los items de la orden
-        if (metadata.items && Array.isArray(metadata.items)) {
-        
-          for (const item of metadata.items) {
-            let productType
-            if (item.category === "motores") productType = "motor"
-            else if (item.category === "reductores") productType = "reductor"
-            else if (item.category === "convertidores") productType = "convertidor"
-            else if (item.category === "arranqueSuave") productType = "arranqueSuave"
-            else productType = item.category
+          console.log("Orden actualizada a 'paid':", existingOrder.id);
 
-            // Crear objeto base para OrderProduct
-            const orderProductData = {
-              order_id: newOrder.id,
-              product_id: item.id,
-              product_type: productType,
-              quantity: item.quantity,
-              unitPrice: item.price,
-              fijacion_salida_id: item?.eje_obj?.id || null,
-              eje_salida_id: item?.eje_salida?.id || null,
-              tipo_entrada_id: item?.tipo_entrada_obj?.id || null
+          // 5. Preparar los datos para enviar el correo de confirmación
+          let customerName = metadata.customer.name;
+          let customerEmail = metadata.customer.email;
+
+          // Si por algún motivo no tenemos los datos del customer en metadata,
+          // podrías buscarlos en BD según existingOrder.user_id
+          if ((!customerName || !customerEmail) && metadata.customer.id) {
+            const userData = await Usuario.findOne({
+              where: { id: metadata.customer.id },
+            });
+            if (userData) {
+              customerName = userData.name;
+              customerEmail = userData.email;
             }
-           
-
-            // Agregar logging para depuración
-        
-
-            // Crear el registro de OrderProduct con todos los campos
-            await OrderProduct.create(orderProductData)
           }
-        } else {
-          console.log("No hay items en la metadata para crear order products.")
-        }
 
-        // 5. Preparar los datos para enviar el correo de confirmación
-
-        // Usar datos de metadata.customer o, si faltan, consultar al modelo User
-        let customerName = metadata.customer.name
-        let customerEmail = metadata.customer.email
-        if ((!customerName || !customerEmail) && metadata.customer.id) {
-          const userData = await User.findOne({ where: { id: metadata.customer.id } })
-          if (userData) {
-            customerName = userData.name
-            customerEmail = userData.email
+          // Armar el detalle de los ítems en HTML (por ejemplo, una tabla)
+          let itemsHtml = "";
+          if (metadata.items && Array.isArray(metadata.items)) {
+            for (const item of metadata.items) {
+              itemsHtml += `
+                <tr>
+                  <td>${item.name}</td>
+                  <td>${item.category}</td>
+                  <td>${item.quantity}</td>
+                  <td>${item.price}</td>
+                </tr>
+              `;
+            }
           }
-        }
 
-        // Armar el detalle de los ítems en HTML (por ejemplo, una tabla)
-        let itemsHtml = ""
-        if (metadata.items && Array.isArray(metadata.items)) {
-          for (const item of metadata.items) {
-            itemsHtml += `
-              <tr>
-                <td>${item.name}</td>
-                <td>${item.category}</td>
-                <td>${item.quantity}</td>
-                <td>${item.price}</td>
-              </tr>
-            `
-          }
-        }
+          const orderDetails = `
+            <p><strong>Fecha de Orden:</strong> ${
+              metadata.order_date
+                ? new Date(metadata.order_date).toLocaleString()
+                : new Date().toLocaleString()
+            }</p>
+            <table border="1" cellpadding="5" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Categoría</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+            <p><strong>Total:</strong> $${metadata.total}</p>
+          `;
 
-        const orderDetails = `
-          <p><strong>Fecha de Orden:</strong> ${new Date(metadata.order_date).toLocaleString()}</p>
-          <table border="1" cellpadding="5" cellspacing="0">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Categoría</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
-          <p><strong>Total:</strong> $${metadata.total}</p>
-        `
+          // 6. Enviar el correo de confirmación al cliente
+          const emailReq = {
+            body: {
+              name: customerName,
+              email: customerEmail,
+              orderDetails,
+            },
+          };
 
-        // 6. Enviar el correo de confirmación al cliente
-        const emailReq = {
-          body: {
+          // 7. Enviar notificación al dueño de la tienda
+          const customerInfo = {
             name: customerName,
             email: customerEmail,
-            orderDetails,
-          },
+            id: metadata.customer.id,
+          };
+
+          // Enviar notificación al dueño de la tienda (no esperamos respuesta)
+          newOrderNotification(
+            {
+              paymentId,
+              user_id: existingOrder.user_id,
+              finalPrice: existingOrder.finalPrice,
+              discountPercentage: existingOrder.discountPercentage,
+              status: "paid",
+            },
+            metadata.items,
+            customerInfo
+          )
+            .then(() =>
+              console.log("Notificación enviada al dueño de la tienda")
+            )
+            .catch((err) =>
+              console.error("Error al enviar notificación al dueño:", err)
+            );
+
+          // Enviar confirmación al cliente
+          await purchaseConfirmation(emailReq, res);
+          return;
+        } else {
+          console.log("La orden ya está en estado 'paid'. No se actualiza.");
         }
-
-        // 7. Enviar notificación al dueño de la tienda
-        const customerInfo = {
-          name: customerName,
-          email: customerEmail,
-          id: metadata.customer.id,
-        }
-
-        
-        // Enviar notificación al dueño de la tienda (no esperamos respuesta)
-        newOrderNotification(orderData, metadata.items, customerInfo)
-          .then(() => console.log("Notificación enviada al dueño de la tienda"))
-          .catch((err) => console.error("Error al enviar notificación al dueño:", err))
-
-        // Enviar confirmación al cliente
-        await purchaseConfirmation(emailReq, res)
-        return
-      } else {
-        console.log("La orden ya existe. Se puede actualizar si es necesario.")
       }
     } else {
-      console.log("No se pudo obtener la metadata necesaria o el pago no está aprobado.")
+      console.log(
+        "No se pudo obtener la metadata necesaria o el pago no está aprobado."
+      );
     }
 
-    return res.sendStatus(200)
+    return res.sendStatus(200);
   } catch (error) {
-    console.error("Error en el webhook:", error)
-    return res.sendStatus(500)
+    console.error("Error en el webhook:", error);
+    return res.sendStatus(500);
   }
-})
+});
 
-
-export default app
-
+export default app;
 
 // ----------------------------------------------------
 // Función para precargar un administrador

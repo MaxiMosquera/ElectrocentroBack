@@ -36,7 +36,7 @@ const ArranqueSuave = sequelize.define("arranquesuave", {
   },
   price: {
    type: DataTypes.DECIMAL(10,2),
-   allowNull: false
+   allowNull: true
   },
   control: {
     type: DataTypes.INTEGER, //2 o 3
