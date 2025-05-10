@@ -1,3 +1,4 @@
+
 import { DataTypes } from "sequelize";
 import sequelize from '../dbconfig.js';
 
@@ -34,7 +35,7 @@ const Reductor = sequelize.define('reductor', {
     allowNull: true
   },
   fijacion_salida_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER, // Almacena la fecha de expiración del token
     default: 0,
     allowNull: false
   },
@@ -59,8 +60,17 @@ const Reductor = sequelize.define('reductor', {
   descuento_porcentaje: {
     type: DataTypes.INTEGER,
     allowNull: true
-  }
+  },
 
+  potencia_maxima: {
+    type: DataTypes.DECIMAL(5, 1),
+    allowNull: true
+  },
+
+  factor_servicio: {
+    type: DataTypes.DECIMAL(5, 1),
+    allowNull: true
+  },
 
 }, {
   tableName: 'reductor',
