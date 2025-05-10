@@ -3,7 +3,6 @@ import {Reductor} from '../models/index.model.js'
 export const getAllReductores = async (req, res) => {
     try {
         const reductores = await Reductor.findAll();
-        console.log(reductores, "red")
         res.status(200).json(reductores);
     } catch (error) {
         res.status(500).json({ error: "Error al obtener los reductores." });

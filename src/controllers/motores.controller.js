@@ -1,14 +1,15 @@
 import { Motor } from "../models/index.model.js";
 
 export const getAllMotores = async (req, res) => {
-        try {
-            const motores = await Motor.findAll();
-            res.json(motores);
-        } catch (error) {
-            console.error("Error al obtener los motores:", error);
-            res.status(500).json({ error: "Error al obtener los motores." });
-        }
-    };
+    try {
+      const motores = await Motor.findAll();
+      console.log(`Total motores en DB: ${motores.length}`);  // ← Aquí
+      res.json(motores);
+    } catch (error) {
+      console.error("Error al obtener los motores:", error);
+      res.status(500).json({ error: "Error al obtener los motores." });
+    }
+  };
 
 export const getMotorById = async (req, res) => {
     try {
@@ -33,7 +34,8 @@ export const createMotor = async (req, res) => {
         res.status(500).json({ error: "Error al crear el motor." });
     }
 };
-export const updateMotor = async (req,) => {
+export const updateMotor = async (req, res) => {
+    console.log(req.body, "body")
     try {
         const motor = await Motor.findByPk(req.params.id);
         if (motor) {

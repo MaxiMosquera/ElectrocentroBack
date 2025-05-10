@@ -87,6 +87,7 @@ app.use("/api/ordenes", OrdenesRouter);
  * Webhook para Mercado Pago
  */
 app.post("/webhook", async (req, res) => {
+  console.log("webhook")
   try {
     // 1. Leer la firma enviada en el header
     const signature = req.headers["x-mercadopago-signature"];
@@ -107,7 +108,7 @@ app.post("/webhook", async (req, res) => {
 
     // 3. Procesar la notificación recibida
     const notification = req.body;
-    console.log(notification, "notification");
+
 
     let metadata;
     let paymentId;
@@ -151,6 +152,10 @@ app.post("/webhook", async (req, res) => {
           );
           const paymentDetails = paymentResponse.data;
           metadata = paymentDetails.metadata;
+          
+      console.log(paymentDetails, "details")
+
+    console.log(metadata, "metada")
         } else {
           console.log("La orden no tiene pagos asociados.");
         }
@@ -168,7 +173,8 @@ app.post("/webhook", async (req, res) => {
       // IMPORTANTE: ahora usamos metadata.orderId (o como quieras llamarlo)
       // en vez de crear una nueva orden. Asegúrate de que, al crear la preferencia,
       // guardes "metadata.orderId = <ID de la orden>".
-      const existingOrder = await Orden.findByPk(metadata.orderId);
+      const existingOrder = await Orden.findByPk(metadata.order_id);
+    
 
       if (!existingOrder) {
         console.log("No se encontró la orden con ese ID en la BD.");

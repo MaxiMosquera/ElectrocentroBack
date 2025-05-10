@@ -15,8 +15,7 @@ export const createPreference = async (req, res) => {
       return res.status(400).json({ error: "La propiedad 'items' no es un arreglo" });
     }
 
-    console.log(req.body,"bod")
-    console.log(req.body.metadata.items,"met")
+   console.log(`${process.env.FRONTEND_URL}/compra-exitosa`)
 
     // 1. Creamos la orden con estado "pending"
     const newOrder = await Orden.create({
@@ -76,7 +75,7 @@ export const createPreference = async (req, res) => {
         failure: `${process.env.FRONTEND_URL}/compra-fallida`,
         pending: `${process.env.FRONTEND_URL}/pending`,
       },
-      auto_return: "approved",
+
       metadata, // aquí ya va el "orderId" agregado
     };
 
