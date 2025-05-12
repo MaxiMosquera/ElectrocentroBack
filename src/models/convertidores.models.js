@@ -12,7 +12,7 @@ const Convertidor = sequelize.define("convertidor", {
   },
   codigo: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   tension: {
     type: DataTypes.STRING,
@@ -32,16 +32,22 @@ const Convertidor = sequelize.define("convertidor", {
   },
   frenado_incluido: {
     type: DataTypes.BOOLEAN,
-    allowNull: false
+    allowNull: false,
   },
   modelo: {
     type: DataTypes.ENUM("CFW300", "CFW500"),
     allowNull: false,
   },
   price: {
-    type: DataTypes.DECIMAL(10,2),
-    allowNull: true
-   }
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+  },
+  /* —— NUEVO —— */
+  out_of_stock: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 export default Convertidor;

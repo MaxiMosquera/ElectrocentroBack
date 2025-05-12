@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import sequelize from "../dbconfig.js";
 
 const ArranqueSuave = sequelize.define("arranquesuave", {
-  referencia: {                     /// nombre
+  referencia: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -12,7 +12,7 @@ const ArranqueSuave = sequelize.define("arranquesuave", {
   },
   codigo: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   tension: {
     type: DataTypes.STRING,
@@ -24,24 +24,30 @@ const ArranqueSuave = sequelize.define("arranquesuave", {
   },
   potencia: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   tamaño: {
-    type: DataTypes.INTEGER, ///1,2,3
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   modelo: {
-    type: DataTypes.ENUM("SSW05", "SSW07","SSW900"),
-    allowNull: false
+    type: DataTypes.ENUM("SSW05", "SSW07", "SSW900"),
+    allowNull: false,
   },
   price: {
-   type: DataTypes.DECIMAL(10,2),
-   allowNull: true
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
   },
   control: {
-    type: DataTypes.INTEGER, //2 o 3
-    allowNull: false
-  }
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  /* —— NUEVO —— */
+  out_of_stock: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 export default ArranqueSuave;
