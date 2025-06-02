@@ -8,84 +8,95 @@ import OrderProduct from "../models/orderProducts.model.js";
 dotenv.config()
 
   export const createPreference = async (req, res) => {
-    try {
-      const { items, metadata } = req.body;
+  try {
+    /* -------------------------------------------
+       1. Validar body
+    ------------------------------------------- */
+    const { items, metadata } = req.body;
+    if (!Array.isArray(items)) {
+      return res
+        .status(400)
+        .json({ error: "'items' debe ser un arreglo" });
+    }
 
-      if (!Array.isArray(items)) {
-        return res.status(400).json({ error: "La propiedad 'items' no es un arreglo" });
-      }
+    /* -------------------------------------------
+       2. Crear la orden en la base
+    ------------------------------------------- */
+    const newOrder = await Orden.create({
+      paymentId: null,                         // se completa vía webhook
+      user_id: metadata.customer.id,
+      finalPrice: parseFloat(metadata.total),
+      discountPercentage: 0,
+      status: "pending",
 
-    console.log(`${process.env.FRONTEND_URL}/compra-exitosa`)
+      /*  datos de factura  */
+      invoiceType: metadata.invoiceType,
+      taxId: metadata.taxId || null,
+      docNumber: metadata.docNumber || null
+    });
 
-      // 1. Creamos la orden con estado "pending"
-      const newOrder = await Orden.create({
-        paymentId: null, // De momento no tenemos el ID de pago
-        user_id: metadata.customer.id,
-        finalPrice: parseFloat(metadata.total),
-        discountPercentage: 0,
-        status: "pending",
-      });
-
-      // 2. Creamos los productos de la orden (OrderProducts)
-      for (const item of metadata.items) {
-        let productType;
-        switch (item.category) {
-          case "motores":
-            productType = "motor";
-            break;
-          case "reductores":
-            productType = "reductor";
-            break;
-          case "convertidores":
-            productType = "convertidor";
-            break;
-          case "arranqueSuave":
-            productType = "arranqueSuave";
-            break;
-          default:
-            productType = item.category; // O maneja un fallback
-        }
-
-        await OrderProduct.create({
-          order_id: newOrder.id,
-          product_id: item.id,
-          product_type: productType,
-          quantity: item.quantity,
-          unitPrice: item.price,
-          fijacion_salida_id: item?.eje_obj?.id || null,
-          eje_salida_id: item?.eje_salida?.id || null,
-          tipo_entrada_id: item?.tipo_entrada_obj?.id || null,
-        });
-      }
-
-      // 3. Guardamos el orderId dentro de metadata para usarlo en el webhook
-      metadata.orderId = newOrder.id;
-
-      // 4. Creamos el objeto de preferencia de MP,
-      //    incluyendo la metadata actualizada con el orderId
-      const preferenceBody = {
-        items: items.map((item) => ({
-          title: item.name,
-          quantity: item.quantity,
-          unit_price: item.price || 1,
-          currency_id: "ARS",
-        })),
-        back_urls: {
-          success: `${process.env.FRONTEND_URL}/compra-exitosa`,
-          failure: `${process.env.FRONTEND_URL}/compra-fallida`,
-          pending: `${process.env.FRONTEND_URL}/pending`,
-        },
-        auto_return: "approved", 
-        metadata, // aquí ya va el "orderId" agregado
+    /* -------------------------------------------
+       3. Registrar cada producto
+    ------------------------------------------- */
+    for (const item of metadata.items) {
+      const map = {
+        motores: "motor",
+        reductores: "reductor",
+        convertidores: "convertidor",
+        arranqueSuave: "arranqueSuave"
       };
 
-      const preference = new Preference(mercadoClient);
-      const result = await preference.create({ body: preferenceBody });
-
-      // 5. Devolvemos la respuesta al frontend con la info de MercadoPago
-      return res.json({ id: result.id, init_point: result.init_point });
-    } catch (error) {
-      console.error("Error al crear la preferencia:", error);
-      return res.status(500).json({ error: "Error al crear la preferencia" });
+      await OrderProduct.create({
+        order_id: newOrder.id,
+        product_id: item.id,
+        product_type: map[item.category] || item.category,
+        quantity: item.quantity,
+        unitPrice: item.price,
+        fijacion_salida_id: item?.eje_obj?.id ?? null,
+        eje_salida_id: item?.eje_salida?.id ?? null,
+        tipo_entrada_id: item?.tipo_entrada_obj?.id ?? null
+      });
     }
-  };
+
+    /* -------------------------------------------
+       4. Añadir orderId a la metadata de MP
+    ------------------------------------------- */
+    metadata.orderId = newOrder.id;
+
+    /* -------------------------------------------
+       5. Armar preferencia de Mercado Pago
+    ------------------------------------------- */
+    const preferenceBody = {
+      items: items.map((it) => ({
+        title: it.name,
+        quantity: it.quantity,
+        unit_price: it.price || 1,
+        currency_id: "ARS"
+      })),
+      back_urls: {
+        success: `${process.env.FRONTEND_URL}/compra-exitosa`,
+        failure: `${process.env.FRONTEND_URL}/compra-fallida`,
+        pending: `${process.env.FRONTEND_URL}/pending`
+      },
+      metadata
+    };
+
+    /* auto_return sólo si FRONTEND_URL no es localhost */
+    if (!process.env.FRONTEND_URL.includes("localhost")) {
+      preferenceBody.auto_return = "approved";
+    }
+
+    const preference = new Preference(mercadoClient);
+    const { id, init_point } = await preference.create({ body: preferenceBody });
+
+    /* -------------------------------------------
+       6. Responder al frontend
+    ------------------------------------------- */
+    return res.json({ id, init_point });
+  } catch (err) {
+    console.error("Error al crear la preferencia:", err);
+    return res
+      .status(500)
+      .json({ error: "Error al crear la preferencia" });
+  }
+};
